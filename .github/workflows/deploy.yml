@@ -3,7 +3,6 @@ name: Deploy static content to Pages
 on:
   push:
     branches: ['main']
-
   workflow_dispatch:
 
 permissions:
@@ -24,24 +23,40 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
           cache: 'npm'
+          
       - name: Install dependencies
         run: npm ci
+        
+      # 👇 PASSO DE DEBUG ADICIONADO AQUI 👇
+      - name: Check Env Variables
+        run: |
+          if [ -z "$VITE_SUPABASE_URL" ]; then echo "❌ ERRO: URL está vazia!"; else echo "✅ URL lida com sucesso (Tamanho: ${#VITE_SUPABASE_URL})"; fi
+          if [ -z "$VITE_SUPABASE_ANON_KEY" ]; then echo "❌ ERRO: KEY está vazia!"; else echo "✅ KEY lida com sucesso (Tamanho: ${#VITE_SUPABASE_ANON_KEY})"; fi
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+      # 👆 FIM DO PASSO DE DEBUG 👆
+          
       - name: Build
         run: npm run build
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          
       - name: Setup Pages
         uses: actions/configure-pages@v4
+        
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: './dist'
+          
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
