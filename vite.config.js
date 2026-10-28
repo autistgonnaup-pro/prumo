@@ -1,11 +1,8 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite' // Importe o plugin
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 
-export default defineConfig({
-  plugins: [
-    react(),
-    tailwindcss(), // Adicione o plugin aqui
-  ],
-  base: '/prumo/',
-})
+export default defineConfig(({ mode }) => ({
+  base: mode === "production" ? "/prumo/" : "/",
+  plugins: [react(), tailwindcss()],
+}));
