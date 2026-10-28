@@ -1,41 +1,72 @@
 // src/pages/Login.jsx
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+
+const MENSAGENS_ERRO = {
+  'Invalid login credentials': 'E-mail ou senha incorretos.',
+  'User already registered': 'Este e-mail já está cadastrado.',
+  'Email not confirmed': 'Confirme seu e-mail antes de entrar.',
+  'Password should be at least 6 characters': 'A senha deve ter no mínimo 6 caracteres.',
+  'Unable to validate email address: invalid format': 'Formato de e-mail inválido.',
+}
+
+const traduzErro = (msg) => MENSAGENS_ERRO[msg] ?? 'Algo deu errado. Tente novamente.'
 
 export default function Login() {
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
-  const [modo, setModo] = useState('login') // 'login' | 'cadastro'
+  const [senha2, setSenha2] = useState('')
+  const [modo, setModo] = useState('login')
   const [erro, setErro] = useState('')
   const [aviso, setAviso] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
+  // Se já está logado, sai da tela de login
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) navigate('/app', { replace: true })
+    })
+  }, [navigate])
+
   async function handleSubmit(e) {
     e.preventDefault()
     setErro('')
     setAviso('')
+
+    const emailLimpo = email.trim().toLowerCase()
+
+    if (modo === 'cadastro' && senha !== senha2) {
+      setErro('As senhas não coincidem.')
+      return
+    }
+
     setLoading(true)
 
-    const { error } =
-      modo === 'login'
-        ? await supabase.auth.signInWithPassword({ email, password: senha })
-        : await supabase.auth.signUp({ email, password: senha })
+    if (modo === 'login') {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: emailLimpo,
+        password: senha,
+      })
+      setLoading(false)
+      if (error) return setErro(traduzErro(error.message))
+      navigate('/app')
+      return
+    }
 
+    const { data, error } = await supabase.auth.signUp({
+      email: emailLimpo,
+      password: senha,
+    })
     setLoading(false)
+    if (error) return setErro(traduzErro(error.message))
 
-    if (error) {
-      setErro(error.message)
-      return
+    if (data.session) {
+      navigate('/app')
+    } else {
+      setAviso('Conta criada! Verifique seu e-mail para confirmar.')
     }
-
-    if (modo === 'cadastro') {
-      setAviso('Conta criada! Verifique seu e-mail para confirmar (se a confirmação estiver ativa no Supabase).')
-      return
-    }
-
-    navigate('/app')
   }
 
   return (
@@ -57,8 +88,11 @@ export default function Login() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-primary"
+          disabled={loading}
+          autoComplete="email"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-primary disabled:opacity-60"
         />
+
         <input
           type="password"
           placeholder="Senha (mín. 6 caracteres)"
@@ -66,8 +100,24 @@ export default function Login() {
           onChange={(e) => setSenha(e.target.value)}
           required
           minLength={6}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-primary"
+          disabled={loading}
+          autoComplete={modo === 'login' ? 'current-password' : 'new-password'}
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-primary disabled:opacity-60"
         />
+
+        {modo === 'cadastro' && (
+          <input
+            type="password"
+            placeholder="Confirme a senha"
+            value={senha2}
+            onChange={(e) => setSenha2(e.target.value)}
+            required
+            minLength={6}
+            disabled={loading}
+            autoComplete="new-password"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-primary disabled:opacity-60"
+          />
+        )}
 
         {erro && <p className="text-sm text-red-600">{erro}</p>}
         {aviso && <p className="text-sm text-green-700">{aviso}</p>}
@@ -86,6 +136,7 @@ export default function Login() {
             setModo(modo === 'login' ? 'cadastro' : 'login')
             setErro('')
             setAviso('')
+            setSenha2('')
           }}
           className="text-sm text-primary underline w-full"
         >
@@ -95,6 +146,3 @@ export default function Login() {
     </div>
   )
 }
-
-console.log("CHAVE SUPABASE:", import.meta.env.VITE_SUPABASE_ANON_KEY)
-console.log("URL SUPABASE:", import.meta.env.VITE_SUPABASE_URL)
