@@ -34,7 +34,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-bg p-6">
-      <h1 className="text-2xl font-bold text-ink mb-6">Prumosssssss</h1>
+      <h1 className="text-2xl font-bold text-ink mb-6">Prumo</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div className="bg-white rounded-2xl shadow p-4">
