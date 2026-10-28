@@ -1,5 +1,5 @@
 // src/pages/Login.jsx
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
@@ -22,13 +22,6 @@ export default function Login() {
   const [aviso, setAviso] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
-
-  // Se já está logado, sai da tela de login
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate('/app', { replace: true })
-    })
-  }, [navigate])
 
   async function handleSubmit(e) {
     e.preventDefault()
