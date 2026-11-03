@@ -28,7 +28,7 @@ npm -v
 No terminal, execute:
 
 ```bash
-npm create vite@latest meu-projeto-react
+npm create vite@latest meu-app-react -- --template react
 ```
 
 > 💡 Substitua `meu-projeto-react` pelo nome desejado para o seu projeto.
