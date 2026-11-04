@@ -1,109 +1,42 @@
-{
-  "cwd": "C:\\Users\\xAgron\\Documents\\prumo",
-  "command": "Get-ChildItem -Recurse -Force | Where-Object { $_.FullName -notlike '*\\node_modules\\*' -and $_.FullName -notlike '*\\node_modules' }",
-  "project": {
-    "name": "prumo",
-    "root": "C:\\Users\\xAgron\\Documents\\prumo",
-    "type": "Vite + React (JSX)",
-    "git": {
-      "branch": "main",
-      "remotes": ["origin/main"],
-      "headFile": ".git/HEAD",
-      "lastCommitFile": ".git/COMMIT_EDITMSG"
-    }
-  },
-  "rootFiles": [
-    { "name": ".env.local", "length": 136, "lastWriteTime": "02/11/2026 23:37", "type": "file" },
-    { "name": ".gitignore", "length": 277, "lastWriteTime": "02/11/2026 23:32", "type": "file" },
-    { "name": "eslint.config.js", "length": 589, "lastWriteTime": "02/11/2026 23:32", "type": "file" },
-    { "name": "index.html", "length": 370, "lastWriteTime": "02/11/2026 23:32", "type": "file" },
-    { "name": "package-lock.json", "length": 91238, "lastWriteTime": "02/11/2026 23:36", "type": "file" },
-    { "name": "package.json", "length": 671, "lastWriteTime": "02/11/2026 23:36", "type": "file" },
-    { "name": "README.md", "length": 4001, "lastWriteTime": "02/11/2026 23:32", "type": "file" },
-    { "name": "vite.config.js", "length": 185, "lastWriteTime": "02/11/2026 23:35", "type": "file" }
-  ],
-  "directories": {
-    ".git": {
-      "type": "dir",
-      "hidden": true,
-      "children": [
-        "hooks", "info", "logs", "objects", "refs",
-        "COMMIT_EDITMSG", "config", "description", "FETCH_HEAD", "HEAD", "index", "ORIG_HEAD"
-      ]
-    },
-    ".github": {
-      "type": "dir",
-      "children": {
-        "workflows": {
-          "type": "dir",
-          "files": [
-            { "name": "deploy.yml", "length": 1139, "lastWriteTime": "02/11/2026 23:43" }
-          ]
-        }
-      }
-    },
-    "dist": {
-      "type": "dir",
-      "children": {
-        "assets": {
-          "type": "dir",
-          "files": [
-            { "name": "index-B4Xyj1TO.js", "length": 434561, "lastWriteTime": "02/11/2026 23:43" },
-            { "name": "index-nqMpL4T3.css", "length": 1788, "lastWriteTime": "02/11/2026 23:43" }
-          ]
-        },
-        "files": [
-          { "name": "favicon.svg", "length": 9522, "lastWriteTime": "02/11/2026 23:32" },
-          { "name": "icons.svg", "length": 5055, "lastWriteTime": "02/11/2026 23:32" },
-          { "name": "index.html", "length": 486, "lastWriteTime": "02/11/2026 23:43" }
-        ]
-      }
-    },
-    "public": {
-      "type": "dir",
-      "files": [
-        { "name": "favicon.svg", "length": 9522, "lastWriteTime": "02/11/2026 23:32" },
-        { "name": "icons.svg", "length": 5055, "lastWriteTime": "02/11/2026 23:32" }
-      ]
-    },
-    "src": {
-      "type": "dir",
-      "children": {
-        "assets": {
-          "type": "dir",
-          "files": [
-            { "name": "hero.png", "length": 13057, "lastWriteTime": "02/11/2026 23:32" },
-            { "name": "react.svg", "length": 4126, "lastWriteTime": "02/11/2026 23:32" },
-            { "name": "vite.svg", "length": 8710, "lastWriteTime": "02/11/2026 23:32" }
-          ]
-        },
-        "lib": {
-          "type": "dir",
-          "files": [
-            { "name": "supabase.js", "length": 430, "lastWriteTime": "02/11/2026 23:38" }
-          ]
-        }
-      },
-      "files": [
-        { "name": "App.css", "length": 3075, "lastWriteTime": "02/11/2026 23:32" },
-        { "name": "App.jsx", "length": 368, "lastWriteTime": "02/11/2026 23:39" },
-        { "name": "index.css", "length": 2280, "lastWriteTime": "02/11/2026 23:32" },
-        { "name": "main.jsx", "length": 239, "lastWriteTime": "02/11/2026 23:32" }
-      ]
-    }
-  },
-  "summary": {
-    "totalRootFiles": 8,
-    "totalTrackedTopLevelDirs": [".git", ".github", "dist", "public", "src"],
-    "buildOutput": {
-      "dir": "dist",
-      "jsBundle": "assets/index-B4Xyj1TO.js",
-      "cssBundle": "assets/index-nqMpL4T3.css"
-    },
-    "notes": [
-      "node_modules foi explicitamente excluído do listamento",
-      "Projeto usa Supabase (src/lib/supabase.js)",
-      "Deploy via GitHub Actions (.github/workflows/deploy.yml)"
-    ]
-  }
-}
+# 📑 Changelog e Histórico de Engenharia
+
+Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
+O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/) e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
+
+---
+
+## [2.0.0] - 2026-11-03
+### 🎯 Visão Geral da Release
+Implementação de uma infraestrutura local de **Auditoria e Rastreabilidade de Arquivos** (File Tracking System). O objetivo é monitorar o ciclo de vida dos arquivos do projeto (criação e exclusão), registrando um histórico persistente em nuvem (Supabase) para fins de governança e acompanhamento de produtividade.
+
+### ✨ Novas Funcionalidades (Features)
+- **Motor de Monitoramento Assíncrono:** Integração com a biblioteca `chokidar` para observação em tempo real de toda a árvore de diretórios do projeto.
+- **Arquitetura de Soft Delete:** Implementação de exclusão lógica no banco de dados. Ao invés de apagar o registro (Hard Delete), o sistema carimba a data/hora da exclusão e altera o status do arquivo, garantindo a integridade do histórico.
+- **Interface de Linha de Comando (CLI) Analítica:** Criação de um *script* de listagem que consome o banco e renderiza uma tabela dinâmica e legível diretamente no terminal.
+- **Automação de Ambiente:** Criação de um *wrapper* em Batch Script (`.bat`) para inicialização do serviço em segundo plano com apenas um clique no Windows, otimizando o fluxo de trabalho (Developer Experience).
+
+### 🛠️ Decisões de Arquitetura e Engenharia
+- **Proteção contra Concorrência:** A tabela foi modelada com restrição de unicidade (`UNIQUE`) na coluna `caminho`. Em conjunto com o método `upsert` do Supabase, isso evita a duplicação de registros caso um arquivo seja recriado ou o *script* seja reiniciado.
+- **Tratamento de Caminhos (Path Normalization):** Implementação de rotinas para normalizar caminhos de arquivos do Windows (barras invertidas) para o padrão de URLs Web (barras normais), garantindo a consistência dos dados independentemente do Sistema Operacional.
+
+### 📦 Dependências Adicionadas
+- `chokidar` (v3.x): Observador de arquivos de alta performance e baixo consumo de CPU.
+- `@supabase/supabase-js` (v2.x): Client oficial para persistência dos dados em nuvem.
+- `dotenv` (v16.x): Gerenciamento seguro de variáveis de ambiente.
+
+### 🗄️ Migrações de Banco de Dados (Infraestrutura)
+Criação da tabela `arquivos_novos` contendo índices e políticas de acesso (RLS) configuradas para o contexto de execução local seguro.
+
+```sql
+DROP TABLE IF EXISTS public.arquivos_novos;
+
+CREATE TABLE public.arquivos_novos (
+  id bigint GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+  caminho text NOT NULL UNIQUE, 
+  status text DEFAULT 'ativo',
+  criado_em timestamptz DEFAULT now(),
+  excluido_em timestamptz DEFAULT null
+);
+
+ALTER TABLE public.arquivos_novos ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Acesso total para script" ON public.arquivos_novos FOR ALL USING (true);
