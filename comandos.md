@@ -122,3 +122,8 @@ alter table public.arquivos_novos add constraint caminho_unico unique (caminho);
 
 ### 💡 Dica
 Sempre que esquecer como listar os arquivos ou como parar o monitor, basta abrir o `comandos.md` aqui no VS Code!
+
+
+04-11-2026
+New-Item -ItemType Directory -Path "src/pages" -Force
+echo "teste" > src/pages/Login.jsx
