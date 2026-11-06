@@ -1,74 +1,223 @@
-import 'dotenv/config';
-import { createClient } from '@supabase/supabase-js';
-import chokidar from 'chokidar';
-import dotenv from 'dotenv';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { useState } from 'react'
+import { supabase } from '../lib/supabase'
 
-dotenv.config({ path: '.env.local' });
+export default function Login() {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const [isRegistering, setIsRegistering] = useState(false)
 
-const supabase = createClient(
-  process.env.VITE_SUPABASE_URL,
-  process.env.SUPABASE_SECRET_KEY,
-  { global: { headers: { 'User-Agent': 'script-local' } } }
-);
+  const handleAuth = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
 
-const comando = process.argv[2];
-const pastaRaiz = path.dirname(fileURLToPath(import.meta.url));
+    try {
+      if (isRegistering) {
+        const { error } = await supabase.auth.signUp({ email, password })
+        if (error) throw error
+        alert('Cadastro realizado! Verifique seu email para confirmar (se habilitado).')
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password })
+        if (error) throw error
+      }
+    } catch (err) {
+      setError(err.message || 'Ocorreu um erro na autenticação.')
+    } finally {
+      setLoading(false)
+    }
+  }
 
-function formatarCaminho(caminhoAbsoluto) {
-  let rel = caminhoAbsoluto.replace(/\\/g, '/').replace(pastaRaiz.replace(/\\/g, '/'), '');
-  return rel.startsWith('/') ? rel.substring(1) : rel;
+  return (
+    <div style={styles.container}>
+      <div style={styles.card}>
+        
+        {/* Cabeçalho Discreto */}
+        <div style={styles.header}>
+          <span style={styles.symbol}>❖</span>
+          <h2 style={styles.title}>
+            {isRegistering ? 'Criar Conta' : 'Acesso ao Prumo'}
+          </h2>
+          <span style={styles.subtitle}>
+            {isRegistering ? 'Junte-se ao grimório.' : 'Identifique-se para continuar.'}
+          </span>
+        </div>
+
+        {/* Aviso de Erro */}
+        {error && (
+          <div style={styles.error}>
+            {error}
+          </div>
+        )}
+
+        {/* Formulário */}
+        <form onSubmit={handleAuth} style={styles.form}>
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>E-mail</label>
+            <input
+              type="email"
+              placeholder="mago@prumo.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              style={styles.input}
+              required
+            />
+          </div>
+
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Senha</label>
+            <input
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={styles.input}
+              required
+            />
+          </div>
+
+          <button type="submit" disabled={loading} style={styles.button}>
+            {loading
+              ? 'Aguarde...'
+              : isRegistering
+                ? 'Cadastrar'
+                : 'Entrar'}
+          </button>
+        </form>
+
+        {/* Rodapé do Card (Alternância) */}
+        <div style={styles.footer}>
+          <span style={styles.footerText}>
+            {isRegistering ? 'Já possui uma conta?' : 'Ainda não tem acesso?'}
+          </span>
+          <button
+            type="button"
+            onClick={() => setIsRegistering(!isRegistering)}
+            style={styles.toggleButton}
+          >
+            {isRegistering ? 'Fazer login' : 'Cadastre-se'}
+          </button>
+        </div>
+
+      </div>
+    </div>
+  )
 }
 
-async function listarArquivos() {
-  console.log('Buscando histórico...\n');
-  const { data, error } = await supabase.from('arquivos_novos').select('*').order('criado_em', { ascending: false });
-  
-  if (error) return console.error('❌ Erro no banco:', error.message);
-  if (data.length === 0) return console.log('Nenhum arquivo registrado.');
-
-  console.table(data.map(item => ({
-    Status: item.status === 'excluído' ? '🔴 Excluído' : '🟢 Ativo',
-    Arquivo: item.caminho,
-    'Criado em': new Date(item.criado_em).toLocaleString('pt-BR'),
-    'Excluído em': item.excluido_em ? new Date(item.excluido_em).toLocaleString('pt-BR') : '-'
-  })));
-}
-
-if (comando === 'list') {
-  listarArquivos();
-} else {
-  const watcher = chokidar.watch(pastaRaiz, {
-    ignored: /(^|[\/\\])\..|node_modules|dist|build|\.git/,
-    persistent: true,
-    ignoreInitial: true,
-  });
-
-  console.log(`👀 Monitorando: ${pastaRaiz}\n`);
-
-  watcher.on('add', async (caminho) => {
-    const rel = formatarCaminho(caminho);
-    console.log(`🟢 [NOVO ARQUIVO] ${rel}`);
-    
-    const { error } = await supabase.from('arquivos_novos').upsert(
-      { caminho: rel, status: 'ativo', criado_em: new Date().toISOString(), excluido_em: null },
-      { onConflict: 'caminho' }
-    );
-    
-    if (error) console.error('❌ Erro ao salvar:', error.message);
-    else console.log(`✅ Salvo no banco.`);
-  });
-
-  watcher.on('unlink', async (caminho) => {
-    const rel = formatarCaminho(caminho);
-    console.log(`\n🔴 [ARQUIVO EXCLUÍDO] ${rel}`);
-    
-    const { error } = await supabase.from('arquivos_novos')
-      .update({ status: 'excluído', excluido_em: new Date().toISOString() })
-      .eq('caminho', rel);
-      
-    if (error) console.error('❌ Erro ao marcar exclusão:', error.message);
-    else console.log(`🗑️ Marcado como excluído no banco.`);
-  });
+// ============================================================
+// ESTILOS — TEMA DISCRETO (DARK FANTASY / CORPORATIVO)
+// ============================================================
+const styles = {
+  container: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100vh',
+    backgroundColor: '#121212', // Fundo escuro quase preto
+    fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+  },
+  card: {
+    backgroundColor: '#1E1E1E', // Cinza escuro (pedra)
+    border: '1px solid #333333',
+    borderRadius: '8px',
+    padding: '2.5rem 2rem',
+    width: '100%',
+    maxWidth: '380px',
+    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)',
+  },
+  header: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginBottom: '1.5rem',
+  },
+  symbol: {
+    color: '#8B7355', // Tom de bronze envelhecido (bem discreto)
+    fontSize: '1.2rem',
+    marginBottom: '0.5rem',
+  },
+  title: {
+    color: '#E0E0E0',
+    fontSize: '1.25rem',
+    fontWeight: '500',
+    margin: '0 0 0.25rem 0',
+    letterSpacing: '0.05rem',
+    fontFamily: '"Cinzel", "Georgia", serif', // Fonte serifada apenas no título
+  },
+  subtitle: {
+    color: '#888888',
+    fontSize: '0.85rem',
+  },
+  error: {
+    backgroundColor: 'rgba(122, 31, 31, 0.15)',
+    borderLeft: '3px solid #7a1f1f',
+    color: '#e57373',
+    padding: '0.75rem 1rem',
+    borderRadius: '4px',
+    marginBottom: '1.5rem',
+    fontSize: '0.85rem',
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1.25rem',
+  },
+  inputGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.4rem',
+  },
+  label: {
+    color: '#AAAAAA',
+    fontSize: '0.75rem',
+    textTransform: 'uppercase',
+    letterSpacing: '0.08rem',
+    fontWeight: '600',
+  },
+  input: {
+    backgroundColor: '#121212',
+    border: '1px solid #333333',
+    borderRadius: '4px',
+    padding: '0.75rem',
+    color: '#E0E0E0',
+    fontSize: '0.95rem',
+    outline: 'none',
+    transition: 'border-color 0.2s ease',
+  },
+  button: {
+    backgroundColor: '#E0E0E0', // Botão claro (contraste) ou poderia ser o tom de bronze
+    color: '#121212',
+    border: 'none',
+    borderRadius: '4px',
+    padding: '0.85rem',
+    fontSize: '0.9rem',
+    fontWeight: '600',
+    letterSpacing: '0.05rem',
+    cursor: 'pointer',
+    marginTop: '0.5rem',
+    transition: 'opacity 0.2s ease',
+  },
+  footer: {
+    marginTop: '2rem',
+    textAlign: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '0.3rem',
+    fontSize: '0.85rem',
+  },
+  footerText: {
+    color: '#888888',
+  },
+  toggleButton: {
+    background: 'none',
+    border: 'none',
+    color: '#A68A64', // Cor de destaque (bronze suave)
+    cursor: 'pointer',
+    fontWeight: '600',
+    padding: 0,
+    fontSize: '0.85rem',
+    fontFamily: 'inherit',
+  },
 }
