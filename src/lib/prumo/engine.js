@@ -1,5 +1,5 @@
 ﻿// src/lib/prumo/engine.js
-import { ATRIBUTOS, CLASSES, PISO, MANA_MAX, MANA_REGEN_DIA } from './constants'
+import { ATRIBUTOS, CLASSES, PISO, MANA_MAX, MANA_REGEN_DIA } from './constants.js'
 
 // ============================================================
 // CÁLCULOS (funções puras)
@@ -15,11 +15,12 @@ export function calcularClasse(atributos) {
     const par = [topo[0], segundo[0]].sort().join('')
     const mapaPar = {
       FORCON: 'guardiao', FORDES: 'mercador', FORCAR: 'guardiao',
-      FORINT: 'artesao', FORSAB: 'andarilho', CONDES: 'mercador',
-      CONCAR: 'mercador', CONINT: 'andarilho', CONCAR: 'mercador',
-      DESCAR: 'ladino', DESINT: 'mercador', DESSAB: 'oraculo',
-      CARINT: 'mercador', CARSAB: 'oraculo', INTSAB: 'erudito',
+      FORINT: 'artesao',  FORSAB: 'andarilho', CONDES: 'mercador',
+      CONCAR: 'mercador',  CONINT: 'andarilho', CONSAB: 'andarilho', // 🔥 Corrigido aqui!
+      DESCAR: 'ladino',    DESINT: 'mercador',  DESSAB: 'oraculo',
+      CARINT: 'mercador',  CARSAB: 'oraculo',   INTSAB: 'erudito',
     }
+
     return CLASSES[mapaPar[par]] || CLASSES.aprendiz
   }
 
@@ -66,6 +67,11 @@ export function concluirMissao(estado, missaoId) {
   if (!missao) return { erro: 'Missão não encontrada' }
   if (missao.concluida) return { erro: 'Missão já concluída' }
 
+  // 🔥 ATIVAÇÃO DA CONSTANTE: Valida se o atributo da missão existe no domínio do RPG
+  if (!ATRIBUTOS[missao.atributo]) {
+    return { erro: `Atributo inválido: ${missao.atributo} não existe no sistema.` }
+  }
+
   const custoMana = missao.recompensa.mana || 0
   if (custoMana > 0 && estado.mana < custoMana) {
     return { erro: 'Mana insuficiente' }
@@ -110,6 +116,11 @@ export function concluirMissao(estado, missaoId) {
 export function desfazerMissao(estado, missaoId) {
   const missao = estado.missoes.find((m) => m.id === missaoId)
   if (!missao || !missao.concluida) return { erro: 'Missão não concluída' }
+
+  // 🔥 ATIVAÇÃO DA CONSTANTE: Proteção contra manipulação de dados corrompidos externos
+  if (!ATRIBUTOS[missao.atributo]) {
+    return { erro: `Atributo inválido: ${missao.atributo} não pode ser desfeito.` }
+  }
 
   const novoAtributos = { ...estado.atributos }
   novoAtributos[missao.atributo] = Math.max(
