@@ -1,324 +1,350 @@
-/* ============================================================
-   DASHBOARD — Tema claro e leve (mobile-first)
-   ============================================================ */
-
-:root {
-  --prumo-bg-app: #ffffff;
-  --prumo-bg-page: #f3f4f6;
-  --prumo-bg-soft: #f9fafb;
-  --prumo-border: #e5e7eb;
-  --prumo-text: #111827;
-  --prumo-text-muted: #6b7280;
-  --prumo-text-soft: #4b5563;
-  --prumo-primary: #7c3aed;
-  --prumo-primary-soft: #ede9fe;
-  --prumo-danger: #ef4444;
-  --prumo-radius: 16px;
-  --prumo-shadow-card: 0 10px 15px -3px rgba(124, 58, 237, 0.3);
-}
-
-/* Reset local (não afeta o resto do app) */
-.dashboard * {
-  box-sizing: border-box;
-}
-
-/* Fundo externo (para telas maiores que 480px) */
-.dashboard-page {
-  background: var(--prumo-bg-page);
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-}
-
-/* Container principal do app */
-.dashboard {
-  width: 100%;
-  max-width: 480px;
-  min-height: 100vh;
-  background: var(--prumo-bg-app);
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
-}
-
-/* ============ HEADER ============ */
-.dashboard-header {
+/* ============ ERRO GLOBAL ============ */
+.dashboard-error {
+  background: var(--prumo-vigor-soft);
+  border-left: 3px solid var(--prumo-vigor);
+  color: var(--prumo-vigor-dark);
+  padding: 12px 16px;
+  border-radius: var(--prumo-radius-md);
+  margin-bottom: 16px;
+  font-size: 0.875rem;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem 1.5rem 1rem;
-}
-
-.dashboard-greeting {
-  font-size: 0.875rem;
-  color: var(--prumo-text-muted);
-  margin: 0;
-}
-
-.dashboard-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--prumo-text);
-  margin: 0.2rem 0 0;
-}
-
-.icon-btn {
-  background: none;
-  border: none;
   cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 8px;
-  transition: background-color 0.2s ease;
 }
+.dashboard-error__close { font-weight: 700; opacity: 0.6; }
 
-.icon-btn:hover {
-  background-color: #fef2f2;
-}
-
-.icon-btn:focus-visible {
-  outline: 2px solid var(--prumo-primary);
-  outline-offset: 2px;
-}
-
-.icon-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* ============ MAIN ============ */
-.dashboard-main {
-  padding: 0 1.5rem 90px; /* espaço para o bottom nav fixo */
-  flex: 1;
-}
-
-/* ============ BANNER (Foco) ============ */
-.focus-banner {
-  background: var(--prumo-primary);
-  border-radius: var(--prumo-radius);
-  padding: 1.5rem;
-  color: #fff;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  box-shadow: var(--prumo-shadow-card);
-}
-
-.focus-banner__text {
-  flex: 1;
-  padding-right: 1rem;
-}
-
-.focus-banner__title {
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: 700;
-}
-
-.focus-banner__subtitle {
-  font-size: 0.875rem;
-  opacity: 0.9;
-  margin: 0.5rem 0 1rem;
-}
-
-.focus-banner__btn {
-  background: #fff;
-  color: var(--prumo-primary);
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  font-weight: 700;
-  cursor: pointer;
-  font-size: 0.875rem;
-  transition: transform 0.15s ease;
-}
-
-.focus-banner__btn:hover {
-  transform: translateY(-1px);
-}
-
-.focus-banner__btn:focus-visible {
-  outline: 2px solid #fff;
-  outline-offset: 2px;
-}
-
-.focus-banner__icon {
-  font-size: 3rem;
-  line-height: 1;
-}
-
-/* ============ SECTION TITLE ============ */
-.section-title {
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: #374151;
-  margin: 0 0 1rem;
-}
-
-/* ============ CATEGORIAS ============ */
-.category-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.category-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-  background: none;
-  border: none;
-  padding: 0;
-  font-family: inherit;
-}
-
-.category-item:focus-visible {
-  outline: 2px solid var(--prumo-primary);
-  outline-offset: 4px;
-  border-radius: 8px;
-}
-
-.category-item__icon {
-  width: 50px;
-  height: 50px;
-  border-radius: var(--prumo-radius);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
-  transition: transform 0.15s ease;
-}
-
-.category-item:hover .category-item__icon {
-  transform: scale(1.05);
-}
-
-.category-item__name {
-  font-size: 0.75rem;
-  color: var(--prumo-text-soft);
-  text-align: center;
-  font-weight: 500;
-}
-
-/* ============ HÁBITOS (scroll horizontal) ============ */
-.habit-scroll {
-  display: flex;
-  gap: 1rem;
-  overflow-x: auto;
-  padding-bottom: 1rem;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-}
-
-.habit-scroll::-webkit-scrollbar {
-  display: none;
-}
-
-.habit-card {
-  min-width: 140px;
-  background: var(--prumo-bg-soft);
-  padding: 1rem;
-  border-radius: var(--prumo-radius);
+/* ============ CHARACTER SHEET ============ */
+.character-sheet {
+  background: var(--prumo-bg-clean);
   border: 1px solid var(--prumo-border);
-  scroll-snap-align: start;
+  border-radius: var(--prumo-radius-xl);
+  padding: 20px;
+  margin-bottom: 24px;
 }
-
-.habit-card__icon {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
+.character-sheet__header {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 16px;
 }
-
-.habit-card__title {
+.character-sheet__title h1 {
   margin: 0;
-  font-size: 1rem;
-  color: var(--prumo-text);
+  font-size: var(--prumo-text-xl);
+  font-weight: 700;
 }
-
-.habit-card__time {
-  font-size: 0.75rem;
+.character-sheet__title p {
+  margin: 4px 0 0;
+  font-size: var(--prumo-text-sm);
   color: var(--prumo-text-muted);
-  margin: 0.25rem 0 1rem;
 }
 
-.habit-card__check {
-  width: 100%;
-  padding: 0.5rem;
+/* Alignment badge */
+.alignment-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
   background: var(--prumo-primary-soft);
   color: var(--prumo-primary);
-  border: none;
-  border-radius: 0.5rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
-  font-family: inherit;
-  font-size: 0.875rem;
+  letter-spacing: 0.08em;
+  border-radius: var(--prumo-radius-full);
+  margin-bottom: 16px;
+  text-transform: uppercase;
+}
+.alignment-badge__dot {
+  width: 8px; height: 8px;
+  background: currentColor;
+  border-radius: 50%;
+  box-shadow: 0 0 8px currentColor;
+}
+.alignment-badge--debuff {
+  background: var(--prumo-vigor-soft);
+  color: var(--prumo-vigor-dark);
+  animation: pulse-debuff 2s ease-in-out infinite;
+}
+.alignment-badge__detail { font-weight: 400; opacity: 0.8; }
+
+@keyframes pulse-debuff {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.65; }
 }
 
-.habit-card__check:hover {
-  background: #ddd6fe;
+/* XP bar */
+.character-sheet__xp { margin-bottom: 12px; }
+.xp-bar {
+  height: 6px;
+  background: var(--prumo-border);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 4px;
 }
-
-.habit-card__check[aria-pressed='true'] {
+.xp-bar__fill {
+  height: 100%;
   background: var(--prumo-primary);
-  color: #fff;
+  transition: width 400ms ease;
+}
+.xp-bar__label {
+  font-size: 0.7rem;
+  color: var(--prumo-text-muted);
+  text-align: right;
+  display: block;
 }
 
-.habit-card__check:focus-visible {
-  outline: 2px solid var(--prumo-primary);
-  outline-offset: 2px;
+/* Mana */
+.mana-bar { margin-bottom: 20px; }
+.mana-bar__header {
+  display: flex; justify-content: space-between;
+  font-size: var(--prumo-text-sm);
+  color: var(--prumo-mana-dark);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.mana-bar__track {
+  height: 8px;
+  background: var(--prumo-mana-soft);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.mana-bar__fill {
+  height: 100%;
+  background: var(--prumo-mana);
+  transition: width 400ms ease;
+}
+.mana-bar--low .mana-bar__fill {
+  animation: mana-pulse 1.5s infinite;
+}
+@keyframes mana-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
 
-/* ============ BOTTOM NAV ============ */
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 480px;
-  background: #fff;
-  display: flex;
-  justify-content: space-around;
-  padding: 1rem 0 calc(1rem + env(safe-area-inset-bottom));
-  border-top: 1px solid var(--prumo-border);
-  box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
-  z-index: 10;
-}
-
-.nav-item {
-  background: none;
-  border: none;
+/* Blocos de atributos */
+.character-sheet__blocks {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-  transition: color 0.2s;
-  color: #9ca3af;
-  font-family: inherit;
-  padding: 0.25rem 0.5rem;
+  gap: 16px;
+  margin-bottom: 16px;
 }
-
-.nav-item--active {
-  color: var(--prumo-primary);
-}
-
-.nav-item:focus-visible {
-  outline: 2px solid var(--prumo-primary);
-  outline-offset: 2px;
-  border-radius: 6px;
-}
-
-.nav-item__icon {
-  font-size: 1.5rem;
-  margin-bottom: 0.25rem;
-}
-
-.nav-item__label {
+.block__title {
   font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0 0 8px;
+  font-weight: 700;
+}
+.block__title--vigor { color: var(--prumo-vigor); }
+.block__title--fluxo { color: var(--prumo-fluxo); }
+.block__title--mana  { color: var(--prumo-mana); }
+
+/* Atributo individual */
+.attr-bar { margin-bottom: 10px; }
+.attr-bar__header {
+  display: flex; align-items: center; gap: 8px;
+  font-size: var(--prumo-text-sm);
+  margin-bottom: 4px;
+}
+.attr-bar__icon { font-size: 0.9rem; }
+.attr-bar__label { flex: 1; color: var(--prumo-text-soft); font-weight: 500; }
+.attr-bar__value { font-weight: 700; font-family: var(--prumo-font); font-variant-numeric: tabular-nums; }
+.attr-bar__warn { color: var(--prumo-vigor); }
+
+.attr-bar__track {
+  position: relative;
+  height: 6px;
+  background: var(--prumo-border);
+  border-radius: 3px;
+  overflow: visible;
+}
+.attr-bar__fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 400ms ease;
+}
+.attr-bar__piso {
+  position: absolute;
+  top: -3px; bottom: -3px;
+  width: 2px;
+  background: var(--prumo-text-muted);
+  opacity: 0.5;
+}
+.attr-bar--danger .attr-bar__value { color: var(--prumo-vigor); }
+.attr-bar--danger .attr-bar__fill {
+  animation: attr-danger-pulse 1.5s infinite;
+}
+@keyframes attr-danger-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Durabilidade */
+.character-sheet__durability {
+  display: flex; justify-content: space-between;
+  font-size: var(--prumo-text-sm);
+  color: var(--prumo-text-muted);
+  padding-top: 12px;
+  border-top: 1px solid var(--prumo-border);
+}
+.character-sheet__durability strong { color: var(--prumo-text); }
+
+/* ============ QUEST LIST ============ */
+.quest-list { margin-bottom: 24px; }
+.quest-list__header { margin-bottom: 12px; }
+.quest-list__title {
+  font-size: var(--prumo-text-lg);
+  font-weight: 700;
+  margin: 0;
+}
+.quest-list__subtitle {
+  font-size: var(--prumo-text-xs);
+  color: var(--prumo-text-muted);
+  margin: 4px 0 0;
+}
+.quest-list__items {
+  display: flex; flex-direction: column; gap: 12px;
+}
+
+/* Quest card */
+.quest-card {
+  background: var(--prumo-bg-soft);
+  border: 1px solid var(--prumo-border);
+  border-radius: var(--prumo-radius-lg);
+  padding: 14px;
+  transition: opacity 200ms, border-color 200ms;
+}
+.quest-card--done {
+  opacity: 0.6;
+  border-color: var(--prumo-primary-soft);
+  background: var(--prumo-primary-soft);
+}
+.quest-card__header {
+  display: flex; gap: 10px; align-items: flex-start;
+  margin-bottom: 10px;
+}
+.quest-card__icon { font-size: 1.2rem; }
+.quest-card__title-wrap { flex: 1; }
+.quest-card__title {
+  font-size: var(--prumo-text-base);
   font-weight: 600;
+  margin: 0;
+}
+.quest-card__desc {
+  font-size: var(--prumo-text-xs);
+  color: var(--prumo-text-muted);
+  margin: 2px 0 0;
+}
+.quest-card__badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--prumo-radius-sm);
+  letter-spacing: 0.05em;
+}
+.quest-card__badge--vigor { background: var(--prumo-vigor-soft); color: var(--prumo-vigor-dark); }
+.quest-card__badge--fluxo { background: var(--prumo-fluxo-soft); color: var(--prumo-fluxo-dark); }
+.quest-card__badge--mana  { background: var(--prumo-mana-soft);  color: var(--prumo-mana-dark); }
+
+.quest-card__rewards {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  font-size: 0.7rem;
+  color: var(--prumo-text-soft);
+  margin-bottom: 10px;
+}
+.quest-card__rewards > span {
+  background: var(--prumo-bg-clean);
+  padding: 2px 8px;
+  border-radius: var(--prumo-radius-sm);
+  border: 1px solid var(--prumo-border);
+}
+.quest-card__mana-cost {
+  color: var(--prumo-mana-dark) !important;
+  border-color: var(--prumo-mana-soft) !important;
+}
+
+.quest-card__btn {
+  width: 100%;
+  padding: 10px;
+  background: var(--prumo-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--prumo-radius-md);
+  font-weight: 600;
+  font-size: var(--prumo-text-sm);
+  cursor: pointer;
+  transition: background 200ms;
+  font-family: inherit;
+}
+.quest-card__btn:hover { background: var(--prumo-primary-hover); }
+.quest-card__btn--done {
+  background: transparent;
+  color: var(--prumo-primary);
+  border: 1px dashed var(--prumo-primary);
+}
+
+/* ============ TOKEN SHOP ============ */
+.token-shop { margin-bottom: 24px; }
+.token-shop__header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 12px;
+}
+.token-shop__title {
+  font-size: var(--prumo-text-lg);
+  font-weight: 700;
+  margin: 0;
+}
+.token-shop__balance {
+  background: var(--prumo-primary-soft);
+  color: var(--prumo-primary);
+  padding: 6px 12px;
+  border-radius: var(--prumo-radius-full);
+  font-weight: 700;
+  font-size: var(--prumo-text-sm);
+}
+.token-shop__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.token-shop__item {
+  background: var(--prumo-bg-soft);
+  border: 1px solid var(--prumo-border);
+  border-radius: var(--prumo-radius-lg);
+  padding: 14px 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 200ms;
+  font-family: inherit;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.token-shop__item:hover:not(:disabled) {
+  border-color: var(--prumo-primary);
+  transform: translateY(-1px);
+}
+.token-shop__item--disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.token-shop__icon { font-size: 1.5rem; }
+.token-shop__name { font-size: var(--prumo-text-sm); font-weight: 600; color: var(--prumo-text); }
+.token-shop__cost { font-size: var(--prumo-text-xs); color: var(--prumo-text-muted); }
+
+/* ============ Debuff global (Prumo Torto) ============ */
+/* Aplicado no container quando há debuff — veremos no App.jsx */
+
+.prumo-torto {
+  position: relative;
+}
+.prumo-torto::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  border: 2px solid var(--prumo-vigor);
+  pointer-events: none;
+  z-index: 9999;
+  animation: debuff-pulse 3s ease-in-out infinite;
+}
+@keyframes debuff-pulse {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.4; }
 }

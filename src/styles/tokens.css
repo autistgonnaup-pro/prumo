@@ -1,0 +1,143 @@
+:root {
+  /* ============ CHROMA ENGINE (Identidade Prumo) ============ */
+
+  /* Cores de assinatura */
+  --prumo-primary:      #7c3aed;  /* Roxo Místico */
+  --prumo-primary-soft: #ede9fe;
+  --prumo-primary-hover:#6d28d9;
+
+  /* Fundos (temas) */
+  --prumo-bg-dungeon:   #121212;  /* Tema escuro: onboarding/introspecção */
+  --prumo-bg-clean:     #ffffff;  /* Tema claro: execução diária */
+  --prumo-bg-page:      #f3f4f6;
+
+  /* Bloco Físico (Hardware) — Vermelho Terracota */
+  --prumo-vigor:        #de5454;
+  --prumo-vigor-soft:   #fee2e2;
+  --prumo-vigor-dark:   #b91c1c;
+
+  /* Bloco Operacional (Geral) — Verde Sálvia */
+  --prumo-fluxo:        #52a174;
+  --prumo-fluxo-soft:   #d1fae5;
+  --prumo-fluxo-dark:   #15803d;
+
+  /* Bloco Mental (Software) — Azul Crepúsculo */
+  --prumo-mana:         #4b7bec;
+  --prumo-mana-soft:    #dbeafe;
+  --prumo-mana-dark:    #1d4ed8;
+
+  /* Neutros */
+  --prumo-text:         #111827;
+  --prumo-text-soft:    #4b5563;
+  --prumo-text-muted:   #6b7280;
+  --prumo-text-disabled:#9ca3af;
+  --prumo-border:       #e5e7eb;
+  --prumo-border-strong:#d1d5db;
+
+  /* Semânticas */
+  --prumo-success:      #10b981;
+  --prumo-warning:      #f59e0b;
+  --prumo-danger:       #ef4444;
+
+  /* ============ TIPOGRAFIA ============ */
+  --prumo-font: 'Inter', system-ui, -apple-system, sans-serif;
+  --prumo-text-xs:   0.75rem;
+  --prumo-text-sm:   0.875rem;
+  --prumo-text-base: 1rem;
+  --prumo-text-lg:   1.125rem;
+  --prumo-text-xl:   1.25rem;
+  --prumo-text-2xl:  1.5rem;
+  --prumo-text-3xl:  2rem;
+
+  /* ============ ESPAÇO / RAIO / SOMBRA ============ */
+  --prumo-space-1: 4px;
+  --prumo-space-2: 8px;
+  --prumo-space-3: 12px;
+  --prumo-space-4: 16px;
+  --prumo-space-5: 20px;
+  --prumo-space-6: 24px;
+  --prumo-space-8: 32px;
+
+  --prumo-radius-sm: 6px;
+  --prumo-radius-md: 8px;
+  --prumo-radius-lg: 12px;
+  --prumo-radius-xl: 16px;
+
+  --prumo-shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --prumo-shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05);
+  --prumo-shadow-lg: 0 10px 15px -3px rgba(124,58,237,0.3);
+
+  /* Transições */
+  --prumo-transition: 200ms ease;
+}
+
+body {
+  font-family: var(--prumo-font);
+  color: var(--prumo-text);
+  background: var(--prumo-bg-page);
+  -webkit-font-smoothing: antialiased;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--prumo-primary);
+  outline-offset: 2px;
+}
+
+/* ============ TELAS DE ESTADO GLOBAL ============ */
+
+.app-loading,
+.app-error {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 24px;
+  text-align: center;
+  font-family: var(--prumo-font);
+  background: var(--prumo-bg-dungeon);
+  color: #e0e0e0;
+}
+
+.app-loading p {
+  margin: 0;
+  font-size: var(--prumo-text-sm);
+  color: #a1a1aa;
+  letter-spacing: 0.05em;
+  animation: pulse-text 2s ease-in-out infinite;
+}
+
+@keyframes pulse-text {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.app-error h2 {
+  font-size: var(--prumo-text-xl);
+  margin: 0;
+  color: var(--prumo-vigor);
+}
+
+.app-error p {
+  margin: 0;
+  color: #a1a1aa;
+  font-size: var(--prumo-text-sm);
+  max-width: 320px;
+}
+
+.app-error button {
+  background: var(--prumo-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--prumo-radius-md);
+  padding: 10px 20px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 200ms;
+}
+
+.app-error button:hover {
+  background: var(--prumo-primary-hover);
+}

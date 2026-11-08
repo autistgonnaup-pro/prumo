@@ -1,37 +1,75 @@
+// src/App.jsx
 import { useEffect, useState } from 'react'
 import { supabase } from './lib/supabase'
 import Login from './components/login/Login'
 import Dashboard from './components/dashboard/Dashboard'
+import PrumoLogo from './components/Prumo/PrumoLogo'
+import './styles/tokens.css'
 
 function App() {
   const [session, setSession] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
-    // 1. Verifica a sessão atual quando a página carrega
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    let ativo = true
+
+    // 1. Busca a sessão atual
+    supabase.auth
+      .getSession()
+      .then(({ data: { session }, error }) => {
+        if (!ativo) return
+        if (error) setError(error.message)
+        setSession(session)
+      })
+      .catch((err) => {
+        if (ativo) setError(err.message || 'Falha ao carregar sessão')
+      })
+      .finally(() => {
+        if (ativo) setLoading(false)
+      })
+
+    // 2. Escuta mudanças de autenticação
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!ativo) return
       setSession(session)
-      setLoading(false)
     })
 
-    // 2. Escuta mudanças na autenticação (login, logout, etc)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-    })
-
-    return () => subscription.unsubscribe()
+    return () => {
+      ativo = false
+      subscription.unsubscribe()
+    }
   }, [])
 
+  // ============ TELA DE CARREGAMENTO ============
   if (loading) {
-    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Carregando...</div>
+    return (
+      <div className="app-loading">
+        <PrumoLogo size={64} />
+        <p>Alinhando prumo...</p>
+      </div>
+    )
   }
 
-  // Se não houver sessão, mostra a tela de Login
+  // ============ ERRO GLOBAL ============
+  if (error) {
+    return (
+      <div className="app-error">
+        <h2>Algo travou o motor</h2>
+        <p>{error}</p>
+        <button onClick={() => window.location.reload()}>Recarregar</button>
+      </div>
+    )
+  }
+
+  // ============ LOGIN ============
   if (!session) {
     return <Login />
   }
 
-  // Se houver sessão, mostra o Dashboard passando os dados do usuário
+  // ============ APP ============
   return <Dashboard user={session.user} />
 }
 
