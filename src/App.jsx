@@ -11,34 +11,37 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
+  // ✅ NOVO
   useEffect(() => {
     let ativo = true
+    let jaResolveu = false
 
-    // 1. Busca a sessão atual
-    supabase.auth
-      .getSession()
-      .then(({ data: { session }, error }) => {
+    // Listener PRIMEIRO (fonte de verdade contínua)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!ativo) return
+      jaResolveu = true
+      setSession(session)
+      setLoading(false)
+    })
+
+    // getSession como fallback (se nenhum evento disparar em 500ms)
+    const timeout = setTimeout(async () => {
+      if (jaResolveu) return
+      try {
+        const { data, error } = await supabase.auth.getSession()
         if (!ativo) return
         if (error) setError(error.message)
-        setSession(session)
-      })
-      .catch((err) => {
-        if (ativo) setError(err.message || 'Falha ao carregar sessão')
-      })
-      .finally(() => {
+        setSession(data.session)
+      } catch (err) {
+        if (ativo) setError(err.message)
+      } finally {
         if (ativo) setLoading(false)
-      })
-
-    // 2. Escuta mudanças de autenticação
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!ativo) return
-      setSession(session)
-    })
+      }
+    }, 500)
 
     return () => {
       ativo = false
+      clearTimeout(timeout)
       subscription.unsubscribe()
     }
   }, [])
