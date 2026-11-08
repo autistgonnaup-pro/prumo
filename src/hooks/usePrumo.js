@@ -1,15 +1,7 @@
-import { useEffect, useReducer, useCallback } from 'react'
+﻿import { useEffect, useReducer, useCallback } from 'react'
 import { criarPersonagemInicial } from '../lib/prumo/initialData'
 import { carregarEstado, salvarEstado, limparEstado } from '../lib/prumo/storage'
-import {
-  executarResets,
-  concluirMissao,
-  desfazerMissao,
-  resgatarRecompensa,
-  calcularClasse,
-  verificarDebuff,
-  calcularNivel,
-} from '../lib/prumo/engine'
+import { executarResets, concluirMissao, desfazerMissao, resgatarRecompensa, calcularClasse, verificarDebuff, calcularNivel } from '../lib/prumo/engine'
 
 function reducer(estado, action) {
   switch (action.type) {
@@ -28,68 +20,31 @@ function reducer(estado, action) {
       return { ...novo, ultimoErro: null }
     }
     case 'RESGATAR': {
-      const { estado: novo, erro } = resgatarRecompensa(
-        estado,
-        action.payload.custo,
-        action.payload.nome
-      )
+      const { estado: novo, erro } = resgatarRecompensa(estado, action.payload.custo, action.payload.nome)
       if (erro) return { ...estado, ultimoErro: erro }
       return { ...novo, ultimoErro: null }
     }
-    case 'RESET_TUDO':
-      return criarPersonagemInicial()
-    case 'LIMPAR_ERRO':
-      return { ...estado, ultimoErro: null }
-    default:
-      return estado
+    case 'RESET_TUDO': return criarPersonagemInicial()
+    case 'LIMPAR_ERRO': return { ...estado, ultimoErro: null }
+    default: return estado
   }
 }
 
 export function usePrumo() {
   const [estado, dispatch] = useReducer(reducer, null)
-
-  // Inicialização
-  useEffect(() => {
-    const salvo = carregarEstado()
-    dispatch({ type: 'INIT', payload: salvo })
-  }, [])
-
-  // Persistência automática
-  useEffect(() => {
-    if (estado) salvarEstado(estado)
-  }, [estado])
-
-  const concluir = useCallback((id) => {
-    dispatch({ type: 'CONCLUIR_MISSAO', payload: id })
-  }, [])
-
-  const desfazer = useCallback((id) => {
-    dispatch({ type: 'DESFAZER_MISSAO', payload: id })
-  }, [])
-
-  const resgatar = useCallback((custo, nome) => {
-    dispatch({ type: 'RESGATAR', payload: { custo, nome } })
-  }, [])
-
-  const resetarTudo = useCallback(() => {
-    limparEstado()
-    dispatch({ type: 'RESET_TUDO' })
-  }, [])
-
-  const limparErro = useCallback(() => {
-    dispatch({ type: 'LIMPAR_ERRO' })
-  }, [])
-
-  // Derivados
-  const derivados = estado
-    ? {
-        classe: calcularClasse(estado.atributos),
-        debuff: verificarDebuff(estado.atributos),
-        nivelInfo: calcularNivel(estado.meta.xp),
-        dailies: estado.missoes.filter((m) => m.tipo === 'daily'),
-        weeklies: estado.missoes.filter((m) => m.tipo === 'weekly'),
-      }
-    : null
-
+  useEffect(() => { const salvo = carregarEstado(); dispatch({ type: 'INIT', payload: salvo }) }, [])
+  useEffect(() => { if (estado) salvarEstado(estado) }, [estado])
+  const concluir = useCallback((id) => dispatch({ type: 'CONCLUIR_MISSAO', payload: id }), [])
+  const desfazer = useCallback((id) => dispatch({ type: 'DESFAZER_MISSAO', payload: id }), [])
+  const resgatar = useCallback((custo, nome) => dispatch({ type: 'RESGATAR', payload: { custo, nome } }), [])
+  const resetarTudo = useCallback(() => { limparEstado(); dispatch({ type: 'RESET_TUDO' }) }, [])
+  const limparErro = useCallback(() => dispatch({ type: 'LIMPAR_ERRO' }), [])
+  const derivados = estado ? {
+    classe: calcularClasse(estado.atributos),
+    debuff: verificarDebuff(estado.atributos),
+    nivelInfo: calcularNivel(estado.meta.xp),
+    dailies: estado.missoes.filter((m) => m.tipo === 'daily'),
+    weeklies: estado.missoes.filter((m) => m.tipo === 'weekly'),
+  } : null
   return { estado, derivados, concluir, desfazer, resgatar, resetarTudo, limparErro }
 }
