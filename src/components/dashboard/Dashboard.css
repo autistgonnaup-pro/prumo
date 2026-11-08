@@ -1,0 +1,324 @@
+/* ============================================================
+   DASHBOARD — Tema claro e leve (mobile-first)
+   ============================================================ */
+
+:root {
+  --prumo-bg-app: #ffffff;
+  --prumo-bg-page: #f3f4f6;
+  --prumo-bg-soft: #f9fafb;
+  --prumo-border: #e5e7eb;
+  --prumo-text: #111827;
+  --prumo-text-muted: #6b7280;
+  --prumo-text-soft: #4b5563;
+  --prumo-primary: #7c3aed;
+  --prumo-primary-soft: #ede9fe;
+  --prumo-danger: #ef4444;
+  --prumo-radius: 16px;
+  --prumo-shadow-card: 0 10px 15px -3px rgba(124, 58, 237, 0.3);
+}
+
+/* Reset local (não afeta o resto do app) */
+.dashboard * {
+  box-sizing: border-box;
+}
+
+/* Fundo externo (para telas maiores que 480px) */
+.dashboard-page {
+  background: var(--prumo-bg-page);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Container principal do app */
+.dashboard {
+  width: 100%;
+  max-width: 480px;
+  min-height: 100vh;
+  background: var(--prumo-bg-app);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+/* ============ HEADER ============ */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 1.5rem 1rem;
+}
+
+.dashboard-greeting {
+  font-size: 0.875rem;
+  color: var(--prumo-text-muted);
+  margin: 0;
+}
+
+.dashboard-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--prumo-text);
+  margin: 0.2rem 0 0;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.icon-btn:hover {
+  background-color: #fef2f2;
+}
+
+.icon-btn:focus-visible {
+  outline: 2px solid var(--prumo-primary);
+  outline-offset: 2px;
+}
+
+.icon-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============ MAIN ============ */
+.dashboard-main {
+  padding: 0 1.5rem 90px; /* espaço para o bottom nav fixo */
+  flex: 1;
+}
+
+/* ============ BANNER (Foco) ============ */
+.focus-banner {
+  background: var(--prumo-primary);
+  border-radius: var(--prumo-radius);
+  padding: 1.5rem;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  box-shadow: var(--prumo-shadow-card);
+}
+
+.focus-banner__text {
+  flex: 1;
+  padding-right: 1rem;
+}
+
+.focus-banner__title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.focus-banner__subtitle {
+  font-size: 0.875rem;
+  opacity: 0.9;
+  margin: 0.5rem 0 1rem;
+}
+
+.focus-banner__btn {
+  background: #fff;
+  color: var(--prumo-primary);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: transform 0.15s ease;
+}
+
+.focus-banner__btn:hover {
+  transform: translateY(-1px);
+}
+
+.focus-banner__btn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.focus-banner__icon {
+  font-size: 3rem;
+  line-height: 1;
+}
+
+/* ============ SECTION TITLE ============ */
+.section-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #374151;
+  margin: 0 0 1rem;
+}
+
+/* ============ CATEGORIAS ============ */
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.category-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+}
+
+.category-item:focus-visible {
+  outline: 2px solid var(--prumo-primary);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+.category-item__icon {
+  width: 50px;
+  height: 50px;
+  border-radius: var(--prumo-radius);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  transition: transform 0.15s ease;
+}
+
+.category-item:hover .category-item__icon {
+  transform: scale(1.05);
+}
+
+.category-item__name {
+  font-size: 0.75rem;
+  color: var(--prumo-text-soft);
+  text-align: center;
+  font-weight: 500;
+}
+
+/* ============ HÁBITOS (scroll horizontal) ============ */
+.habit-scroll {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.habit-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.habit-card {
+  min-width: 140px;
+  background: var(--prumo-bg-soft);
+  padding: 1rem;
+  border-radius: var(--prumo-radius);
+  border: 1px solid var(--prumo-border);
+  scroll-snap-align: start;
+}
+
+.habit-card__icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.habit-card__title {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--prumo-text);
+}
+
+.habit-card__time {
+  font-size: 0.75rem;
+  color: var(--prumo-text-muted);
+  margin: 0.25rem 0 1rem;
+}
+
+.habit-card__check {
+  width: 100%;
+  padding: 0.5rem;
+  background: var(--prumo-primary-soft);
+  color: var(--prumo-primary);
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  font-family: inherit;
+  font-size: 0.875rem;
+}
+
+.habit-card__check:hover {
+  background: #ddd6fe;
+}
+
+.habit-card__check[aria-pressed='true'] {
+  background: var(--prumo-primary);
+  color: #fff;
+}
+
+.habit-card__check:focus-visible {
+  outline: 2px solid var(--prumo-primary);
+  outline-offset: 2px;
+}
+
+/* ============ BOTTOM NAV ============ */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  background: #fff;
+  display: flex;
+  justify-content: space-around;
+  padding: 1rem 0 calc(1rem + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--prumo-border);
+  box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
+  z-index: 10;
+}
+
+.nav-item {
+  background: none;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: color 0.2s;
+  color: #9ca3af;
+  font-family: inherit;
+  padding: 0.25rem 0.5rem;
+}
+
+.nav-item--active {
+  color: var(--prumo-primary);
+}
+
+.nav-item:focus-visible {
+  outline: 2px solid var(--prumo-primary);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.nav-item__icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.nav-item__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
