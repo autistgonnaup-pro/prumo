@@ -6,24 +6,27 @@ import { ATRIBUTOS, CLASSES, PISO, MANA_MAX, MANA_REGEN_DIA } from './constants.
 // ============================================================
 
 export function calcularClasse(atributos) {
+  // 1. Ordena mirando no valor numérico contido no índice [1] da tupla
   const ordenados = Object.entries(atributos).sort((a, b) => b[1] - a[1])
   const [topo] = ordenados
+  
+  // 2. Valida com segurança se há um empate exato entre os dois maiores atributos
   const empate = ordenados[1] && ordenados[1][1] === topo[1]
 
   if (empate) {
-    const [segundo] = ordenados[1]
+    const segundo = ordenados[1]
     const par = [topo[0], segundo[0]].sort().join('')
     const mapaPar = {
       FORCON: 'guardiao', FORDES: 'mercador', FORCAR: 'guardiao',
       FORINT: 'artesao',  FORSAB: 'andarilho', CONDES: 'mercador',
-      CONCAR: 'mercador',  CONINT: 'andarilho', CONSAB: 'andarilho', // 🔥 Corrigido aqui!
+      CONCAR: 'mercador',  CONINT: 'andarilho', CONSAB: 'andarilho',
       DESCAR: 'ladino',    DESINT: 'mercador',  DESSAB: 'oraculo',
       CARINT: 'mercador',  CARSAB: 'oraculo',   INTSAB: 'erudito',
     }
-
     return CLASSES[mapaPar[par]] || CLASSES.aprendiz
   }
 
+  // 3. Fallback para os caminhos de atributo dominante único tradicional
   const dominante = topo[0]
   if (['INT', 'SAB'].includes(dominante)) return CLASSES.erudito
   if (['DES', 'CAR'].includes(dominante)) return CLASSES.ladino
@@ -67,7 +70,7 @@ export function concluirMissao(estado, missaoId) {
   if (!missao) return { erro: 'Missão não encontrada' }
   if (missao.concluida) return { erro: 'Missão já concluída' }
 
-  // 🔥 ATIVAÇÃO DA CONSTANTE: Valida se o atributo da missão existe no domínio do RPG
+  // Valida se o atributo da missão existe no domínio do RPG
   if (!ATRIBUTOS[missao.atributo]) {
     return { erro: `Atributo inválido: ${missao.atributo} não existe no sistema.` }
   }
@@ -117,7 +120,7 @@ export function desfazerMissao(estado, missaoId) {
   const missao = estado.missoes.find((m) => m.id === missaoId)
   if (!missao || !missao.concluida) return { erro: 'Missão não concluída' }
 
-  // 🔥 ATIVAÇÃO DA CONSTANTE: Proteção contra manipulação de dados corrompidos externos
+  // Proteção contra manipulação de dados corrompidos externos
   if (!ATRIBUTOS[missao.atributo]) {
     return { erro: `Atributo inválido: ${missao.atributo} não pode ser desfeito.` }
   }
@@ -182,7 +185,8 @@ export function executarResets(estado) {
 
     if (cicloTerminou && !m.concluida) {
       atributos[m.atributo] = Math.max(0, atributos[m.atributo] + m.penalidade.atributo)
-      durabilidade = Math.max(0, durabilidade - m.penalidade.durabilidade)
+      // 🔥 CORREÇÃO: Mudado de "-" para "+" para somar corretamente o valor negativo e blindado o teto de 100%
+      durabilidade = Math.max(0, Math.min(100, durabilidade + m.penalidade.durabilidade))
     }
 
     return cicloTerminou
