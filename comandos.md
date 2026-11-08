@@ -1,155 +1,149 @@
-# 🛠️ Guia de Referência de Comandos - Projeto Prumo
+# 🛠️ Guia de Referência Rápida - Projeto Prumo
 
-Este documento serve como um guia rápido de consulta para o gerenciamento de arquivos, execução do monitor do Supabase, manipulação de scripts e versionamento com Git.
+> **Dica de Visualização:** No VS Code, pressione `Ctrl + Shift + V` para abrir a versão formatada e limpa deste guia.
 
 ---
 
-## 📂 1. Estrutura e Manipulação de Arquivos e Pastas
-*Utilize estes comandos para organizar a estrutura do projeto ou corrigir caminhos de importação direto pelo terminal.*
+## 🚀 1. Atalhos Rápidos (Uso Diário)
+*Os comandos essenciais para rodar, testar e salvar o seu progresso diariamente.*
 
-### Criar a pasta de páginas
-Cria a pasta `pages` dentro do diretório `src`. O parâmetro `-Force` garante que o comando não falhe caso a pasta já exista.
-```powershell
-New-Item -ItemType Directory -Path "src/pages" -Force
+### 📦 Buildar e Enviar para o GitHub (Tudo Automático)
+Roda o build de produção do Vite, adiciona as alterações, cria o commit e envia para a branch principal de uma só vez:
+```bash
+npm run deploy
+```
+*💡 Nota: Caso queira usar mensagens personalizadas para cada envio em vez da mensagem padrão fixa do script, utilize a seção de **Versionamento Manual (Git)** deste guia.*
+
+### ⚡ Abrir o Servidor Local de Desenvolvimento
+Inicia o ambiente local do React/Vite para testar seu código no navegador:
+```bash
+npm run dev
 ```
 
-### Criar um arquivo de teste rápido
-Gera um arquivo chamado `Login.jsx` preenchido com a palavra "teste" dentro da pasta de páginas. Útil para validar se o monitor do Supabase está detectando novos arquivos.
+---
+
+## 📂 2. Manipular Arquivos, Pastas e Importações
+*Comandos rápidos para organizar a estrutura do seu projeto direto pelo terminal PowerShell.*
+
+### Criar uma Estrutura Completa de Arquivos (Exemplo: Componente Login)
+Cria as pastas necessárias (caso não existam) e gera os arquivos vazios de uma única vez:
 ```powershell
-echo "teste" > src/pages/Login.jsx
+New-Item -ItemType File -Path "src\components\Login\Login.js", "src\components\Login\Login.css", "src\components\Login\SocialButtons.js" -Force
 ```
 
-### Alterar importações em massa dentro de um arquivo
-Abre o arquivo `src\pages.jsx`, substitui todas as linhas que puxam componentes de `./pages/` para `./components/` e salva o arquivo automaticamente. Evita ter que alterar linha por linha manualmente.
+### Criar uma Pasta Específica
 ```powershell
-(Get-Content -Path "src\pages.jsx") -replace "from './pages/","from './components/" | Set-Content -Path "src\pages.jsx"
+New-Item -ItemType Directory -Path "src\pages" -Force
 ```
 
-### Renomear arquivos ou pastas
-Comando padrão do terminal para renomear qualquer arquivo ou diretório. Substitua pelos nomes reais que deseja alterar.
+### Renomear Qualquer Arquivo ou Pasta
 ```powershell
 ren nome_antigo.txt nome_novo.txt
 ```
 
+### Corrigir Importações em Massa (Substituir Texto)
+Altera de forma automática todas as linhas que puxam componentes de `./pages/` para `./components/` dentro do arquivo selecionado:
+```powershell
+(Get-Content -Path "src\pages.jsx") -replace "from './pages/","from './components/" | Set-Content -Path "src\pages.jsx"
+```
+
 ---
 
-## 🚀 2. Iniciar e Parar o Monitoramento de Arquivos
-*Instruções para gerenciar o script `watch-files.js`, responsável por monitorar em tempo real as criações e exclusões de arquivos no seu computador.*
+## 📡 3. Monitor de Arquivos & Supabase
+*Instruções para gerenciar o script secundário `watch-files.js` que monitora as alterações do seu disco rígido.*
 
-### Iniciar o monitoramento (Deixar rodando)
-Executa o script que fica "escutando" as alterações nas pastas do projeto.
-```bash
-node watch-files.js
-```
-*Alternativa por atalho (Windows):* Caso prefira rodar em uma janela separada do CMD sem travar o terminal atual do VS Code:
-```bash
-start iniciar-monitor.bat
-```
+### Iniciar o Monitoramento
+* **Opção 1 (No terminal atual):** `node watch-files.js`
+* **Opção 2 (Janela externa separada):** `start iniciar-monitor.bat`
 
-### Parar o monitoramento
-Para encerrar o processo do monitor que está travando o terminal atual, clique dentro do terminal e pressione:
+### Parar o Monitoramento
+Clique dentro do terminal onde o monitor está travado e pressione a combinação:
 ```text
 Ctrl + C
 ```
-*(Se iniciou pelo arquivo `.bat`, basta fechar a janela preta do prompt de comando).*
 
----
-
-## 📋 3. Interagir com o Supabase via CLI
-*Comandos para listar e testar a comunicação do script local com o banco de dados na nuvem.*
-
-### Listar arquivos salvos no banco
-Abra uma **nova aba** no terminal do VS Code e execute o comando abaixo para puxar e exibir tudo o que já foi registrado na tabela do Supabase:
+### Ver o que está Salvo no Banco de Dados
+Abra uma **nova aba** no terminal do VS Code e consulte os registros atuais na tabela do Supabase:
 ```bash
 node watch-files.js list
 ```
 
----
-
-## 🧪 4. Testar Fluxos de Criação e Exclusão
-*Passo a passo para validar se o monitoramento e a sincronização com o banco estão funcionando perfeitamente.*
-
-1. Deixe o monitor rodando em uma aba do terminal (`node watch-files.js`).
-2. Abra uma **segunda aba** no terminal e execute um dos comandos abaixo:
-
-**Criar arquivo temporário para teste:**
-```bash
-echo "teste" > arquivo-teste.txt
-```
-
-**Excluir o arquivo temporário para testar a remoção:**
-```bash
-rm arquivo-teste.txt
-```
-*(Nota: No CMD tradicional do Windows, use `del arquivo-teste.txt` se o `rm` não funcionar).*
+### Testar a Sincronização do Monitor com o Banco
+Com o monitor ativo em uma aba, execute estes comandos em outra aba para testar se ele detecta as ações:
+* **Criar arquivo de teste:** `echo "teste" > arquivo-teste.txt`
+* **Deletar arquivo de teste:** `rm arquivo-teste.txt`
 
 ---
 
-## 📦 5. Instalação e Dependências
-*Comandos necessários ao clonar o projeto em uma nova máquina ou ao adicionar recursos de terceiros.*
+## 💾 4. Versionamento Manual com Git
+*Utilize este fluxo quando quiser salvar o código com uma mensagem descritiva personalizada detalhando o que você alterou.*
 
-### Instalar todas as dependências do projeto
-Lê o arquivo `package.json` e instala tudo o que o projeto precisa para rodar.
+### 1. Verificar o status atual das modificações
 ```bash
-npm install
+git status
 ```
 
-### Instalar dependências específicas do monitor
-Instala individualmente as bibliotecas necessárias para o script de monitoramento: variáveis de ambiente (`dotenv`), cliente do banco (`@supabase/supabase-js`) e o observador de arquivos (`chokidar`).
+### 2. Adicionar todas as alterações para o salvamento
 ```bash
-npm install dotenv @supabase/supabase-js chokidar
+git add .
+```
+
+### 3. Criar o ponto de salvamento com sua mensagem personalizada
+```bash
+git commit -m "feat: adiciona componente de botoes sociais no login"
+```
+
+### 4. Enviar os commits para o repositório no GitHub
+```bash
+git push origin main
 ```
 
 ---
 
-## 🔐 6. Segurança e Variáveis de Ambiente
-*Regras cruciais para proteger as credenciais de acesso ao seu banco de dados.*
+## ⚠️ 5. Diagnóstico de Erros Comuns
+*Consulte esta seção se algo parar de funcionar durante o desenvolvimento.*
 
-O arquivo `.env.local` guarda chaves secretas e **NUNCA** deve ser enviado para o GitHub. Certifique-se de que a linha `.env.local` está escrita dentro do seu arquivo `.gitignore`.
+### Erro: "Não é possível localizar o caminho... porque ele não existe"
+* **Motivo:** Você tentou rodar um comando (como o de substituir texto ou renomear) em um arquivo que está dentro de uma subpasta, mas o terminal está procurando na raiz do projeto.
+* **Solução:** Certifique-se de incluir a pasta correta no caminho (ex: usar `src\pages.jsx` em vez de apenas `pages.jsx`) ou use `ls` para verificar a estrutura de arquivos.
 
-**Estrutura padrão necessária para o `.env.local`:**
+### Erro de Conexão ou Credenciais do Supabase
+* **Motivo:** O arquivo `.env.local` está ausente, configurado incorretamente ou com nomes de variáveis trocados.
+* **Solução:** Verifique se as variáveis coincidem perfeitamente com a estrutura abaixo:
 ```env
 VITE_SUPABASE_URL="sua_url_do_projeto"
 VITE_SUPABASE_PUBLISHABLE_KEY="sua_chave_publica"
 SUPABASE_SECRET_KEY="sua_chave_secreta_aqui"
 ```
 
----
-
-## 💾 7. Versionamento com Git
-*Fluxo padrão de comandos para salvar o seu progresso de forma segura no histórico do Git.*
-
-### 1. Verificar o status atual
-Mostra quais arquivos foram criados, modificados ou deletados desde o seu último salvamento.
-```bash
-git status
-```
-
-### 2. Preparar os arquivos
-Adiciona todas as modificações atuais para a lista de salvamento do próximo commit.
-```bash
-git add .
-```
-
-### 3. Salvar as alterações
-Grava as alterações permanentemente no histórico com uma mensagem clara explicando o que foi feito.
-```bash
-git commit -m "feat: adiciona monitoramento de criacao e exclusao de arquivos"
-```
+### O Script de Monitoramento não Detecta Novos Arquivos
+* **Motivo:** O processo do Node pode ter travado em segundo plano ou o `chokidar` parou de responder.
+* **Solução:** Pare o terminal com `Ctrl + C` e inicie novamente com `node watch-files.js`. Se o problema persistir, certifique-se de que a tabela no banco foi criada corretamente usando o script SQL abaixo.
 
 ---
 
-## ⚠️ 8. Estrutura do Banco de Dados (SQL Editor)
-*Caso precise resetar ou criar a tabela do monitor do zero, copie o código abaixo, abra o painel do Supabase na web, vá em **SQL Editor**, cole e execute.*
+## 📦 6. Instalação e Banco de Dados
+*Comandos de manutenção geral do ambiente de desenvolvimento.*
 
+### Instalar Todas as Dependências do Projeto
+```bash
+npm install
+```
+
+### Instalar Pacotes Exclusivos do Monitor de Arquivos
+```bash
+npm install dotenv @supabase/supabase-js chokidar
+```
+
+### Estrutura SQL para o Banco de Dados
+Caso precise recriar a tabela do zero, copie este código e execute no **SQL Editor** do painel web do Supabase:
 ```sql
--- Cria a tabela que vai armazenar o registro dos novos arquivos detectados
 create table public.arquivos_novos (
   id bigint generated by default as identity primary key,
   caminho text not null,
   criado_em timestamptz default now()
 );
 
--- Segurança: Impede que o script tente registrar o mesmo caminho de arquivo duplicado
+-- Garante segurança impedindo registros duplicados para o mesmo arquivo
 alter table public.arquivos_novos add constraint caminho_unico unique (caminho);
 ```
