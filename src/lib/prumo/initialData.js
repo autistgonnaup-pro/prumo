@@ -27,6 +27,40 @@ export function criarPersonagemInicial(nome = 'Aprendiz') {
       { id: 'int-codigo', atributo: 'INT', tipo: 'daily', titulo: 'Codificar o motor do prumo', descricao: 'Foco profundo de desenvolvimento (consome mana)', recompensa: { xp: 15, atributo: 1.5, tokens: 5, mana: 40 }, penalidade: { durabilidade: 5, atributo: -0.5 }, concluida: false, ultimaConclusao: null },
       { id: 'sab-arquitetura', atributo: 'SAB', tipo: 'weekly', titulo: 'Planejar arquitetura da semana', descricao: 'Definir dependências e próximos passos do projeto', recompensa: { xp: 20, atributo: 1.0, tokens: 10, mana: 0 }, penalidade: { durabilidade: 8, atributo: -0.8 }, concluida: false, ultimaConclusao: null },
     ],
+        projetos: [
+      {
+        id: 'proj-prumo-mvp',
+        titulo: 'Prumo MVP',
+        tipo: 'masmorra',
+        icone: '🏰',
+        descricao: 'Lançar a versão funcional do app com ficha, dailies e tokens.',
+        preRequisitos: { INT: 12, SAB: 12 },
+        recompensa: { xp: 100, tokens: 30, atributo: { INT: 2, SAB: 2 } },
+        milestones: [
+          { id: 'm1', titulo: 'Sistema de autenticação', feito: true },
+          { id: 'm2', titulo: 'Ficha de personagem', feito: true },
+          { id: 'm3', titulo: 'Dailies + resets', feito: false },
+          { id: 'm4', titulo: 'Loja de tokens', feito: false },
+        ],
+        concluido: false,
+      },
+      {
+        id: 'proj-financas',
+        titulo: 'Reserva de emergência',
+        tipo: 'raid',
+        icone: '⚔️',
+        descricao: 'Guardar 6 meses de despesas em conta separada.',
+        preRequisitos: { DES: 15 },
+        recompensa: { xp: 80, tokens: 40, atributo: { DES: 3 } },
+        milestones: [
+          { id: 'm1', titulo: 'Calcular despesa mensal', feito: false },
+          { id: 'm2', titulo: 'Definir meta (6x)', feito: false },
+          { id: 'm3', titulo: 'Automatizar transferência', feito: false },
+        ],
+        concluido: false,
+      },
+    ],
     tokensGastos: [],
   }
 }
+

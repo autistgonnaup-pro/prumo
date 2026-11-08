@@ -31,3 +31,18 @@ export const CLASSES = {
   mercador: { id: 'mercador', nome: 'Mercador', desc: 'Operacional e físico.', icone: '🪙' },
   oraculo: { id: 'oraculo', nome: 'Oráculo', desc: 'Operacional e mental.', icone: '👁️' },
 }
+
+export const RECOMPENSAS_LOJA = [
+  { id: 'game1h', nome: '1h de videogame', custo: 30, icone: '🎮', categoria: 'lazer' },
+  { id: 'refeicao', nome: 'Refeição livre', custo: 50, icone: '🍔', categoria: 'comida' },
+  { id: 'filme', nome: 'Sessão de cinema em casa', custo: 40, icone: '🍿', categoria: 'lazer' },
+  { id: 'livro', nome: 'Comprar um livro', custo: 80, icone: '📚', categoria: 'investimento' },
+  { id: 'dayoff', nome: 'Dia de folga total', custo: 150, icone: '🛌', categoria: 'descanso' },
+  { id: 'role', nome: 'Sair com amigos', custo: 60, icone: '🍻', categoria: 'social' },
+]
+
+export const TIPOS_PROJETO = {
+  masmorra: { label: 'Masmorra', icone: '🏰', desc: 'Projeto de longo prazo com milestones' },
+  raid: { label: 'Raid', icone: '⚔️', desc: 'Objetivo épico, exige preparo' },
+  boss: { label: 'Chefe', icone: '👹', desc: 'Desafio único de alto impacto' },
+}
