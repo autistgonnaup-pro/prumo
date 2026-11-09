@@ -1,8 +1,14 @@
+// src/components/Prumo/views/ShopView.jsx
 import { useState } from 'react'
 import { RECOMPENSAS_LOJA } from '../../../lib/prumo/constants'
 
 export default function ShopView({ estado, resgatar }) {
   const [aba, setAba] = useState('loja')
+
+  // ✅ Fallbacks defensivos para evitar crash de desestruturação
+  const tokensDisponiveis = estado?.tokens || 0
+  const historicoGastos = estado?.tokensGastos || []
+  const catalogoItens = RECOMPENSAS_LOJA || []
 
   return (
     <div className="view">
@@ -30,23 +36,24 @@ export default function ShopView({ estado, resgatar }) {
             <span className="shop-balance__icon">🪙</span>
             <div>
               <p className="shop-balance__label">Saldo disponível</p>
-              <p className="shop-balance__value">{estado.tokens}</p>
+              <p className="shop-balance__value">{tokensDisponiveis}</p>
             </div>
           </div>
 
           <div className="shop-grid">
-            {RECOMPENSAS_LOJA.map((r) => {
-              const pode = estado.tokens >= r.custo
+            {catalogoItens.map((r) => {
+              // ✅ Validação de compra protegida por variável local
+              const pode = tokensDisponiveis >= (r?.custo || 0)
               return (
                 <button
-                  key={r.id}
+                  key={r?.id || r?.nome}
                   className={`shop-card ${!pode ? 'shop-card--disabled' : ''}`}
                   disabled={!pode}
-                  onClick={() => resgatar(r.custo, r.nome)}
+                  onClick={() => resgatar(r?.custo || 0, r?.nome || 'Item Desconhecido')}
                 >
-                  <span className="shop-card__icon">{r.icone}</span>
-                  <span className="shop-card__name">{r.nome}</span>
-                  <span className="shop-card__cost">{r.custo} 🪙</span>
+                  <span className="shop-card__icon">{r?.icone || '🎁'}</span>
+                  <span className="shop-card__name">{r?.nome || 'Recompensa'}</span>
+                  <span className="shop-card__cost">{r?.custo || 0} 🪙</span>
                 </button>
               )
             })}
@@ -56,7 +63,7 @@ export default function ShopView({ estado, resgatar }) {
 
       {aba === 'historico' && (
         <>
-          {estado.tokensGastos.length === 0 ? (
+          {historicoGastos.length === 0 ? (
             <div className="empty-state">
               <p className="empty-state__emoji">📜</p>
               <p className="empty-state__title">Nenhum resgate ainda</p>
@@ -64,15 +71,16 @@ export default function ShopView({ estado, resgatar }) {
             </div>
           ) : (
             <div className="shop-historico">
-              {[...estado.tokensGastos].reverse().map((g, i) => (
-                <div key={i} className="shop-historico__item">
+              {/* ✅ Clone do array protegido por fallback imutável */}
+              {[...historicoGastos].reverse().map((g, i) => (
+                <div key={g?.id || i} className="shop-historico__item">
                   <div>
-                    <p className="shop-historico__nome">{g.nome}</p>
+                    <p className="shop-historico__nome">{g?.nome || 'Item Resgatado'}</p>
                     <p className="shop-historico__data">
-                      {new Date(g.data).toLocaleString('pt-BR')}
+                      {g?.data ? new Date(g.data).toLocaleString('pt-BR') : 'Data Indisponível'}
                     </p>
                   </div>
-                  <span className="shop-historico__custo">−{g.custo} 🪙</span>
+                  <span className="shop-historico__custo">−{g?.custo || 0} 🪙</span>
                 </div>
               ))}
             </div>
