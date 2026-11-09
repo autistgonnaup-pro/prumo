@@ -1,4 +1,4 @@
-﻿// ✅ NOVO
+﻿// src/hooks/usePrumo.js
 import { useEffect, useReducer, useCallback, useMemo } from 'react'
 import { criarPersonagemInicial } from '../lib/prumo/initialData'
 import { carregarEstado, salvarEstado, limparEstado } from '../lib/prumo/storage'
@@ -37,37 +37,46 @@ function reducer(shell, action) {
     }
     case 'TOGGLE_MILESTONE': {
       const { projetoId, milestoneId } = action.payload
-      const projetos = (shell.estado.projetos || []).map((p) =>
+      const projetos = (shell.estado?.projetos || []).map((p) =>
         p.id === projetoId
-          ? { ...p, milestones: p.milestones.map((m) => m.id === milestoneId ? { ...m, feito: !m.feito } : m) }
+          ? { ...p, milestones: (p.milestones || []).map((m) => m.id === milestoneId ? { ...m, feito: !m.feito } : m) }
           : p
       )
       return { ...shell, estado: { ...shell.estado, projetos } }
     }
     case 'CONCLUIR_PROJETO': {
-      const projeto = (shell.estado.projetos || []).find((p) => p.id === action.payload)
+      const projeto = (shell.estado?.projetos || []).find((p) => p.id === action.payload)
       if (!projeto) return { ...shell, ultimoErro: 'Projeto não encontrado' }
-      if (!projeto.milestones.every((m) => m.feito)) {
+      
+      const milestones = projeto.milestones || []
+      if (!milestones.every((m) => m.feito)) {
         return { ...shell, ultimoErro: 'Complete todos os milestones primeiro.' }
       }
-      const atributos = { ...shell.estado.atributos }
+      
+      const atributos = { ...(shell.estado?.atributos || {}) }
       Object.entries(projeto.recompensa?.atributo || {}).forEach(([k, v]) => {
         atributos[k] = Math.min(100, (atributos[k] || 0) + v)
       })
+
+      const tokensAtuais = shell.estado?.tokens || 0
+      const tokensGanhos = projeto.recompensa?.tokens || 0
+      const xpAtual = shell.estado?.meta?.xp || 0
+      const xpGanho = projeto.recompensa?.xp || 0
+
       return {
         ...shell,
         estado: {
           ...shell.estado,
           atributos,
-          tokens: shell.estado.tokens + (projeto.recompensa?.tokens || 0),
-          meta: { ...shell.estado.meta, xp: shell.estado.meta.xp + (projeto.recompensa?.xp || 0) },
+          tokens: tokensAtuais + tokensGanhos,
+          meta: { ...shell.estado?.meta, xp: xpAtual + xpGanho },
           projetos: shell.estado.projetos.map((p) => p.id === projeto.id ? { ...p, concluido: true } : p),
         },
         ultimoErro: null,
       }
     }
     case 'ADICIONAR_PROJETO':
-      return { ...shell, estado: { ...shell.estado, projetos: [...(shell.estado.projetos || []), action.payload] } }
+      return { ...shell, estado: { ...shell.estado, projetos: [...(shell.estado?.projetos || []), action.payload] } }
     case 'RESET_TUDO':
       limparEstado()
       return { estado: criarPersonagemInicial(), hidratado: true, ultimoErro: null }
@@ -86,9 +95,12 @@ export function usePrumo() {
     dispatch({ type: 'HIDRATAR', payload: salvo, agora: new Date() })
   }, [])
 
+  // ✅ Correção: Só sincroniza com o LocalStorage se o estado já estiver devidamente hidratado
   useEffect(() => {
-    if (shell.estado) salvarEstado(shell.estado)
-  }, [shell.estado])
+    if (shell.hidratado && shell.estado) {
+      salvarEstado(shell.estado)
+    }
+  }, [shell.estado, shell.hidratado])
 
   const concluir = useCallback((id) => dispatch({ type: 'CONCLUIR_MISSAO', payload: id }), [])
   const desfazer = useCallback((id) => dispatch({ type: 'DESFAZER_MISSAO', payload: id }), [])
@@ -100,16 +112,16 @@ export function usePrumo() {
   const concluirProjeto = useCallback((id) => dispatch({ type: 'CONCLUIR_PROJETO', payload: id }), [])
   const adicionarProjeto = useCallback((projeto) => dispatch({ type: 'ADICIONAR_PROJETO', payload: projeto }), [])
 
-  // ✅ Derivados memoizados
+  // ✅ Derivados memoizados e protegidos contra referências nulas
   const derivados = useMemo(() => {
     const e = shell.estado
     if (!e) return null
     return {
       classe: calcularClasse(e.atributos),
       debuff: verificarDebuff(e.atributos),
-      nivelInfo: calcularNivel(e.meta.xp),
-      dailies: e.missoes.filter((m) => m.tipo === 'daily'),
-      weeklies: e.missoes.filter((m) => m.tipo === 'weekly'),
+      nivelInfo: calcularNivel(e.meta?.xp || 0),
+      dailies: (e.missoes || []).filter((m) => m.tipo === 'daily'),
+      weeklies: (e.missoes || []).filter((m) => m.tipo === 'weekly'),
       projetosAtivos: (e.projetos || []).filter((p) => !p.concluido),
     }
   }, [shell.estado])

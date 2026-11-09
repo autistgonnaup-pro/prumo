@@ -11,37 +11,36 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  // ✅ NOVO
   useEffect(() => {
     let ativo = true
-    let jaResolveu = false
 
-    // Listener PRIMEIRO (fonte de verdade contínua)
+    // 1. Criar o ouvinte contínuo do Supabase
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!ativo) return
-      jaResolveu = true
       setSession(session)
       setLoading(false)
     })
 
-    // getSession como fallback (se nenhum evento disparar em 500ms)
-    const timeout = setTimeout(async () => {
-      if (jaResolveu) return
-      try {
-        const { data, error } = await supabase.auth.getSession()
+    // 2. Fallback imediato e assíncrono (sem travar o usuário por 500ms)
+    // O getSession pega instantaneamente o que está no cache local do dispositivo
+    supabase.auth.getSession()
+      .then(({ data, error }) => {
         if (!ativo) return
-        if (error) setError(error.message)
-        setSession(data.session)
-      } catch (err) {
+        if (error) {
+          setError(error.message)
+        } else if (data.session) {
+          setSession(data.session)
+        }
+      })
+      .catch((err) => {
         if (ativo) setError(err.message)
-      } finally {
+      })
+      .finally(() => {
         if (ativo) setLoading(false)
-      }
-    }, 500)
+      })
 
     return () => {
       ativo = false
-      clearTimeout(timeout)
       subscription.unsubscribe()
     }
   }, [])
