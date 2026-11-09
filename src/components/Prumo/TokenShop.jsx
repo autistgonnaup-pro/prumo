@@ -1,3 +1,5 @@
+// src/components/Prumo/TokenShop.jsx
+
 const RECOMPENSAS = [
   { id: 'game', nome: '1h de videogame', custo: 30, icone: '🎮' },
   { id: 'refeicao', nome: 'Refeição livre', custo: 50, icone: '🍔' },
@@ -6,22 +8,26 @@ const RECOMPENSAS = [
 ]
 
 export default function TokenShop({ tokens, onResgatar }) {
+  // ✅ Defensive handling protects against unhydrated or null initial balance variables
+  const saldoTokens = typeof tokens === 'number' ? tokens : 0
+
   return (
     <section className="token-shop">
       <div className="token-shop__header">
         <h2 className="token-shop__title">Loja de Tokens</h2>
         <div className="token-shop__balance">
-          🪙 {tokens}
+          🪙 {saldoTokens}
         </div>
       </div>
       <div className="token-shop__grid">
         {RECOMPENSAS.map((r) => {
-          const podeResgatar = tokens >= r.custo
+          const podeResgatar = saldoTokens >= r.custo
           return (
             <button
               key={r.id}
               className={`token-shop__item ${!podeResgatar ? 'token-shop__item--disabled' : ''}`}
-              onClick={() => podeResgatar && onResgatar(r.custo, r.nome)}
+              // ✅ Redundant boolean check removed since native 'disabled' property already intercepts clicks
+              onClick={() => onResgatar(r.custo, r.nome)}
               disabled={!podeResgatar}
             >
               <span className="token-shop__icon">{r.icone}</span>

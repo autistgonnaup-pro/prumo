@@ -1,19 +1,32 @@
-import { useState } from 'react'
+// src/components/Prumo/ModalNovaMeta.jsx
+import { useState, useEffect } from 'react'
 import { TIPOS_PROJETO } from '../../lib/prumo/constants'
 
 export default function ModalNovaMeta({ onClose, onCreate }) {
+  // ✅ Dica: Garanta que a string inicial bata com alguma chave real do seu arquivo constants.js
   const [titulo, setTitulo] = useState('')
-  const [tipo, setTipo] = useState('masmorra')
+  const [tipo, setTipo] = useState(Object.keys(TIPOS_PROJETO)[0] || 'estudo')
   const [descricao, setDescricao] = useState('')
+
+  // ✅ Adiciona fechamento automático do modal ao apertar a tecla ESC (Melhor UX)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [onClose])
 
   const handleSubmit = (e) => {
     e.preventDefault()
     if (!titulo.trim()) return
+
     onCreate({
       id: 'proj-' + Date.now(),
       titulo: titulo.trim(),
       tipo,
-      icone: TIPOS_PROJETO[tipo].icone,
+      // ✅ Proteção com fallback caso o tipo selecionado não possua ícone mapeado
+      icone: TIPOS_PROJETO[tipo]?.icone || '🎯',
       descricao: descricao.trim() || 'Sem descrição.',
       preRequisitos: {},
       recompensa: { xp: 60, tokens: 20, atributo: {} },
@@ -36,6 +49,7 @@ export default function ModalNovaMeta({ onClose, onCreate }) {
               onChange={(e) => setTitulo(e.target.value)}
               placeholder="Ex: Aprender Rust"
               autoFocus
+              required
             />
           </label>
 
@@ -46,9 +60,9 @@ export default function ModalNovaMeta({ onClose, onCreate }) {
               value={tipo}
               onChange={(e) => setTipo(e.target.value)}
             >
-              {Object.entries(TIPOS_PROJETO).map(([key, t]) => (
+              {Object.entries(TIPOS_PROJETO || {}).map(([key, t]) => (
                 <option key={key} value={key}>
-                  {t.icone} {t.label}
+                  {t?.icone || '🎯'} {t?.label || key}
                 </option>
               ))}
             </select>
@@ -78,3 +92,6 @@ export default function ModalNovaMeta({ onClose, onCreate }) {
     </div>
   )
 }
+
+
+

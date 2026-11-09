@@ -1,19 +1,25 @@
+// src/components/Prumo/AttributeBar.jsx
 import { ATRIBUTOS, BLOCOS, PISO } from '../../lib/prumo/constants'
 
 export default function AttributeBar({ attrKey, valor }) {
-  const attr = ATRIBUTOS[attrKey]
-  const bloco = BLOCOS[attr.bloco]
-  const abaixoPiso = valor < PISO
-  const noPiso = valor === PISO
-  const pct = Math.min(100, (valor / 50) * 100) // escala visual: 50 = barra cheia
+  // ✅ Fallbacks defensivos para evitar quebras por referências nulas
+  const attr = ATRIBUTOS[attrKey] || { icon: '❓', label: attrKey, bloco: 'geral' }
+  const bloco = BLOCOS[attr.bloco] || { cor: 'neutral', hex: '#94a3b8' }
+  
+  const valorSeguro = typeof valor === 'number' ? valor : 0
+  const abaixoPiso = valorSeguro < PISO
+  
+  // ✅ Escala corrigida para base 100 de acordo com o teto do motor do RPG
+  const pct = Math.min(100, (valorSeguro / 100) * 100) 
+  const posicaoPiso = (PISO / 100) * 100
 
   return (
-    <div className={`attr-bar attr-bar--${bloco.cor} ${abaixoPiso ? 'attr-bar--danger' : ''}`}>
+    <div className={`attr-bar attr-bar--${bloco.cor || 'neutral'} ${abaixoPiso ? 'attr-bar--danger' : ''}`}>
       <div className="attr-bar__header">
         <span className="attr-bar__icon" aria-hidden="true">{attr.icon}</span>
         <span className="attr-bar__label">{attr.label}</span>
         <span className="attr-bar__value">
-          {valor.toFixed(1)}
+          {valorSeguro.toFixed(1)}
           {abaixoPiso && <span className="attr-bar__warn"> ▼</span>}
         </span>
       </div>
@@ -22,10 +28,10 @@ export default function AttributeBar({ attrKey, valor }) {
           className="attr-bar__fill"
           style={{ width: `${pct}%`, backgroundColor: bloco.hex }}
         />
-        {/* Marcador do piso */}
+        {/* Marcador do piso posicionado na escala real correta */}
         <div
           className="attr-bar__piso"
-          style={{ left: `${(PISO / 50) * 100}%` }}
+          style={{ left: `${posicaoPiso}%` }}
           title={`Piso: ${PISO}`}
         />
       </div>
