@@ -1,7 +1,11 @@
+// src/components/Prumo/views/AgendaView.jsx
 import { ATRIBUTOS, BLOCOS } from '../../../lib/prumo/constants'
 
 export default function AgendaView({ derivados, concluir, desfazer }) {
-  const { dailies, weeklies } = derivados
+  // Fallbacks para arrays vazios evitam quebras caso derivados esteja incompleto
+  const dailies = derivados?.dailies || []
+  const weeklies = derivados?.weeklies || []
+
   const totalDailies = dailies.length
   const feitasDailies = dailies.filter((m) => m.concluida).length
   const totalWeeklies = weeklies.length
@@ -67,10 +71,18 @@ export default function AgendaView({ derivados, concluir, desfazer }) {
 }
 
 function MissaoRow({ missao, onToggle }) {
-  const attr = ATRIBUTOS[missao.atributo]
-  const bloco = BLOCOS[attr.bloco]
+  // ✅ Proteção contra Atributos ou Blocos inexistentes/nulos
+  const attr = ATRIBUTOS[missao?.atributo] || { icon: '❓', key: 'ST', bloco: 'geral' }
+  const bloco = BLOCOS[attr.bloco] || { hex: '#94a3b8' } // Cinza slate neutro como fallback
+
+  // ✅ Proteção defensiva para chaves numéricas das recompensas
+  const recompensaAtributo = missao?.recompensa?.atributo || 0
+  const recompensaXp = missao?.recompensa?.xp || 0
+  const recompensaTokens = missao?.recompensa?.tokens || 0
+  const custoMana = missao?.recompensa?.mana || 0
+
   return (
-    <div className={`missao-row ${missao.concluida ? 'missao-row--done' : ''}`}>
+    <div className={`missao-row ${missao?.concluida ? 'missao-row--done' : ''}`}>
       <div
         className="missao-row__icon"
         style={{ backgroundColor: bloco.hex + '20', color: bloco.hex }}
@@ -78,23 +90,23 @@ function MissaoRow({ missao, onToggle }) {
         {attr.icon}
       </div>
       <div className="missao-row__body">
-        <p className="missao-row__titulo">{missao.titulo}</p>
-        <p className="missao-row__desc">{missao.descricao}</p>
+        <p className="missao-row__titulo">{missao?.titulo || 'Missão Sem Nome'}</p>
+        <p className="missao-row__desc">{missao?.descricao || 'Sem descrição cadastrada.'}</p>
         <div className="missao-row__rewards">
-          <span>+{missao.recompensa.atributo} {attr.key}</span>
-          <span>+{missao.recompensa.xp} XP</span>
-          <span>+{missao.recompensa.tokens} 🪙</span>
-          {missao.recompensa.mana > 0 && (
-            <span className="missao-row__mana">−{missao.recompensa.mana} 💠</span>
+          <span>+{recompensaAtributo} {attr.key}</span>
+          <span>+{recompensaXp} XP</span>
+          <span>+{recompensaTokens} 🪙</span>
+          {custoMana > 0 && (
+            <span className="missao-row__mana">−{custoMana} 💠</span>
           )}
         </div>
       </div>
       <button
-        className={`missao-row__btn ${missao.concluida ? 'missao-row__btn--done' : ''}`}
-        onClick={() => onToggle(missao.id)}
-        aria-pressed={missao.concluida}
+        className={`missao-row__btn ${missao?.concluida ? 'missao-row__btn--done' : ''}`}
+        onClick={() => onToggle(missao?.id)}
+        aria-pressed={missao?.concluida}
       >
-        {missao.concluida ? '✓' : '○'}
+        {missao?.concluida ? '✓' : '○'}
       </button>
     </div>
   )
